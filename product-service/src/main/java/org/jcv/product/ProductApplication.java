@@ -14,5 +14,7 @@ public class ProductApplication
     }
 
     @Bean
-    public ModelMapper modelMapper(){return new ModelMapper();}
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+    }
 }

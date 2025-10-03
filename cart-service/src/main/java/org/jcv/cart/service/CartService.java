@@ -1,7 +1,9 @@
 package org.jcv.cart.service;
 
+import org.jcv.cart.client.ProductServiceClient;
 import org.jcv.cart.dto.CartDto;
 import org.jcv.cart.dto.CartItemDto;
+import org.jcv.cart.dto.ProductDto;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class CartService {
+
     private final RedisTemplate<String, Cart> redisTemplate;
 
     private static final String CART_KEY_PREFIX = "cart:";
+
+    @Autowired
+    private ProductServiceClient productServiceClient;
 
     @Autowired
     private org.modelmapper.ModelMapper modelMapper;
@@ -56,6 +62,8 @@ public class CartService {
         }
         CartItem item = modelMapper.map(itemDto, CartItem.class);
         // TODO get price from product service
+        ProductDto productDto = productServiceClient.getProductById(item.getProductId());
+        item.setPrice(productDto.getPrice());
         cart.addItem(item);
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);

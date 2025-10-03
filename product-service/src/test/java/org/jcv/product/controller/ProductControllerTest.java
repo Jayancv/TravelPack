@@ -1,6 +1,5 @@
 package org.jcv.product.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jcv.product.dto.ProductDto;
 import org.jcv.product.service.ProductService;
@@ -37,8 +36,8 @@ class ProductControllerTest
     @Test
     void testGetProducts() throws Exception
     {
-        ProductDto p1 = new ProductDto( 1, 101, "TOU", "Tour1" );
-        ProductDto p2 = new ProductDto( 2, 102, "TOU", "Tour2" );
+        ProductDto p1 = new ProductDto(1, 101, "TOU", "Tour1", 10);
+        ProductDto p2 = new ProductDto(2, 102, "TOU", "Tour2", 15);
 
         List<ProductDto> productDtos = Arrays.asList( p1, p2 );
 
@@ -54,7 +53,7 @@ class ProductControllerTest
     @Test
     void testGetProductById() throws Exception
     {
-        ProductDto product = new ProductDto( 1, 2, "TOU", "Tour2" );
+        ProductDto product = new ProductDto( 1, 2, "TOU", "Tour2" , 20 );
 
         Mockito.when( productService.getProductById( 1 ) ).thenReturn( product );
 
@@ -68,8 +67,8 @@ class ProductControllerTest
     @Test
     void testSaveProduct() throws Exception
     {
-        ProductDto request = new ProductDto( 2, 102, "TOU", "Tour2" );
-        ProductDto savedObject = new ProductDto( 2, 102, "TOU", "Tour2" );
+        ProductDto request = new ProductDto( 2, 102, "TOU", "Tour2", 10 );
+        ProductDto savedObject = new ProductDto( 2, 102, "TOU", "Tour2", 15 );
 
         Mockito.when( productService.saveProduct( Mockito.any( ProductDto.class ) ) ).thenReturn( savedObject );
 
@@ -85,7 +84,7 @@ class ProductControllerTest
     @Test
     void testUpdateProduct() throws Exception
     {
-        ProductDto updatedProduct = new ProductDto( 1, 2, "TOU", "Berlin tour" );
+        ProductDto updatedProduct = new ProductDto( 1, 2, "TOU", "Berlin tour", 10 );
 
         Mockito.when( productService.updateProduct( Mockito.any( ProductDto.class ) ) ).thenReturn( updatedProduct );
 

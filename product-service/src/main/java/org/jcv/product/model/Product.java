@@ -17,5 +17,5 @@ public class Product
     private int productId;
     private String productCode;
     private String productName;
-
+    private double price;
 }

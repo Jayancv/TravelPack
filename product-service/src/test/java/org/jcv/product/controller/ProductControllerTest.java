@@ -1,7 +1,7 @@
 package org.jcv.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jcv.product.dto.ProductDto;
+import org.jcv.common.product.dto.ProductDto;
 import org.jcv.product.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

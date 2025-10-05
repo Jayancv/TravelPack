@@ -1,6 +1,6 @@
 package org.jcv.product.controller;
 
-import org.jcv.product.dto.ProductDto;
+import org.jcv.common.product.dto.ProductDto;
 import org.jcv.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,8 +36,9 @@ public class ProductController
         return productService.saveProduct(productDTO);
     }
 
-    @PutMapping("/product")
-    public ProductDto updateProduct(@RequestBody ProductDto productDTO) {
+    @PutMapping("/product/{productId}")
+    public ProductDto updateProduct(@RequestBody ProductDto productDTO, @PathVariable Integer productId) {
+       // TODO need to use product id
         return productService.updateProduct(productDTO);
     }
 

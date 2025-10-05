@@ -1,6 +1,6 @@
 package org.jcv.cart.client;
 
-import org.jcv.cart.dto.ProductDto;
+import org.jcv.common.product.dto.ProductDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

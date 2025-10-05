@@ -1,4 +1,4 @@
-package org.jcv.product.dto;
+package org.jcv.common.product.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

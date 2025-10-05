@@ -3,7 +3,7 @@ package org.jcv.cart.service;
 import org.jcv.cart.client.ProductServiceClient;
 import org.jcv.cart.dto.CartDto;
 import org.jcv.cart.dto.CartItemDto;
-import org.jcv.cart.dto.ProductDto;
+import org.jcv.common.product.dto.ProductDto;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;

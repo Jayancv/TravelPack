@@ -1,7 +1,7 @@
 package org.jcv.product.service;
 
 
-import org.jcv.product.dto.ProductDto;
+import org.jcv.common.product.dto.ProductDto;
 import org.jcv.product.dto.ProductEventDto;
 import org.jcv.product.model.Product;
 import org.jcv.product.repository.ProductRepository;
@@ -35,11 +35,9 @@ public class ProductService
 
     public ProductDto saveProduct( ProductDto productDTO )
     {
-        productRepository.save( modelMapper.map( productDTO, Product.class ) );
-
+        Product product = productRepository.save( modelMapper.map( productDTO, Product.class ) );
         publisher.publish( new ProductEventDto( ProductEventDto.Type.CREATED, productDTO.getId(), Instant.now(), productDTO ) );
-
-        return productDTO;
+        return modelMapper.map( product, ProductDto.class );
     }
 
     public ProductDto getProductById( Integer productId )

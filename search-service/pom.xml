@@ -47,6 +47,14 @@
 			<artifactId>modelmapper</artifactId>
 			<version>3.2.0</version>
 		</dependency>
+
+        <!--        Internal libraries -->
+        <dependency>
+            <groupId>org.jcv</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

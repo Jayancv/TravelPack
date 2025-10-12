@@ -5,7 +5,7 @@ import org.jcv.common.ProductType;
 public class HotelResult extends BaseResult {
 
     public HotelResult() {
-        super.setType(ProductType.HTL);
+        super.setProductType(ProductType.HTL);
     }
 
 }

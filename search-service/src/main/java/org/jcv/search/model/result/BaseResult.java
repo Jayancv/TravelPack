@@ -19,6 +19,6 @@ public class BaseResult {
     private String supplierName;
     private String supplierCode;
 
-    private ProductType type;
+    private ProductType productType;
 
 }

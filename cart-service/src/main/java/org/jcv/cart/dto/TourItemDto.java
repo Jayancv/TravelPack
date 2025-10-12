@@ -1,20 +1,13 @@
-package org.jcv.search.model.result;
+package org.jcv.cart.dto;
 
 import lombok.Data;
 import org.jcv.common.DurationType;
-import org.jcv.common.ProductType;
 
 @Data
-public class TourResult extends BaseResult{
-
+public class TourItemDto extends CartItemDto {
     private String tourName;
     private String tourCode;
     private String tourType;
     private DurationType durationType;
     private int duration;
-
-
-    public TourResult(){
-        super.setProductType(ProductType.TOU);
-    }
 }

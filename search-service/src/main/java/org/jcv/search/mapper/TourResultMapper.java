@@ -23,7 +23,7 @@ public class TourResultMapper {
         r.setChild(result.getChild());
         r.setFromDate(result.getFromDate());
         r.setToDate(result.getToDate());
-        r.setType(result.getType());
+        r.setProductType(result.getProductType().getCode() );
 
         return r;
     }
@@ -43,7 +43,7 @@ public class TourResultMapper {
         result.setChild(criteria.getChild());
         result.setFromDate(criteria.getFromDate());
         result.setToDate(criteria.getToDate());
-        result.setType(contract.getType());
+        result.setProductType(contract.getType());
 
         return result;
     }

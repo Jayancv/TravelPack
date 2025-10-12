@@ -1,15 +1,18 @@
 package org.jcv.cart.service;
 
 import org.jcv.cart.client.ProductServiceClient;
+import org.jcv.cart.client.SearchServiceClient;
 import org.jcv.cart.dto.CartDto;
-import org.jcv.cart.dto.CartItemDto;
-import org.jcv.common.product.dto.ProductDto;
+import org.jcv.cart.mapper.IProductResultMapper;
+import org.jcv.common.ProductType;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
+import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +24,16 @@ public class CartService {
     private static final String CART_KEY_PREFIX = "cart:";
 
     @Autowired
+    private List<IProductResultMapper<? extends BaseResultDto>> mappers;
+
+    @Autowired
+    private List<IProductSearchService<? extends BaseResultDto>> productSearchServices;
+
+    @Autowired
     private ProductServiceClient productServiceClient;
+
+    @Autowired
+    private SearchServiceClient searchServiceClient;
 
     @Autowired
     private org.modelmapper.ModelMapper modelMapper;
@@ -42,14 +54,24 @@ public class CartService {
         return cart;
     }
 
-    public Optional<Cart> getCart(long cartId) {
-        return Optional.ofNullable(redisTemplate.opsForValue().get(CART_KEY_PREFIX + cartId));
+    public Optional<CartDto> getCart(long cartId) {
+        Optional<Cart> cartOpt = loadCart(cartId);
+
+        if (cartOpt.isPresent()) {
+            return Optional.ofNullable(modelMapper.map(cartOpt.get(), CartDto.class));
+        }
+        return Optional.empty();
     }
 
-    public CartDto addItem(long cartId, CartItemDto itemDto) {
+    private Optional<Cart> loadCart(long cartId) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(CART_KEY_PREFIX + cartId));
+
+    }
+
+    public CartDto addItem(long cartId, BaseResultDto itemDto) {
         Cart cart = null;
         if (cartId > -1) {
-            Optional<Cart> exCart = getCart(cartId);
+            Optional<Cart> exCart = loadCart(cartId);
             if (exCart.isPresent()) {
                 cart = exCart.get();
             }
@@ -60,19 +82,32 @@ public class CartService {
             return null;
             // TODO pass correct exception
         }
-        CartItem item = modelMapper.map(itemDto, CartItem.class);
-        // TODO get price from product service
-        ProductDto productDto = productServiceClient.getProductById(item.getProductId());
-        item.setPrice(productDto.getPrice());
+        int maxItemNumber = cart.getCartItems().stream()
+                .filter(i -> i.getProductType().getCode().equals(itemDto.getProductType()))
+                .mapToInt(CartItem::getItemNo)
+                .max()
+                .orElse(0);
+
+        ProductType type = ProductType.fromCode(itemDto.getProductType());
+        IProductResultMapper<BaseResultDto> mapper = findMapper(type);
+
+        CartItem item = mapper.mapToCartItem(itemDto);
+        item.setItemNo(maxItemNumber + 1);
+
+        IProductSearchService<BaseResultDto> searchService = findSearchService(type);
+        BaseResultDto result = searchService.searchProduct(item);
+        mapper.updateCartItemWithSearchResult(item, result);
+
+        item.setPrice(0);
         cart.addItem(item);
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
 
-    public CartDto removeItem(long cartId, String productId) {
+    public CartDto removeItem(long cartId, String itemKey) {
         Cart cart = null;
         if (cartId > -1) {
-            Optional<Cart> exCart = getCart(cartId);
+            Optional<Cart> exCart = loadCart(cartId);
             if (exCart.isPresent()) {
                 cart = exCart.get();
             }
@@ -80,7 +115,9 @@ public class CartService {
         if (cart == null) {
             return null;
         }
-        cart.removeItem(Integer.valueOf(productId));
+//        ProductType productType = CartItem.extractProductType(itemKey);
+//        int itemNo = CartItem.extractItemNumber(itemKey);
+        cart.removeItem(itemKey);
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
@@ -92,4 +129,21 @@ public class CartService {
     public void deleteCart(long cartId) {
         redisTemplate.delete(CART_KEY_PREFIX + cartId);
     }
+
+    @SuppressWarnings("unchecked")
+    private IProductResultMapper<BaseResultDto> findMapper(ProductType type) {
+        return (IProductResultMapper<BaseResultDto>) mappers.stream()
+                .filter(m -> m.supports(type))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported product type: " + type));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends BaseResultDto> IProductSearchService<T> findSearchService(ProductType type) {
+        return (IProductSearchService<T>) productSearchServices.stream()
+                .filter(s -> s.supports(type))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No search service for type " + type));
+    }
+
 }

@@ -30,7 +30,7 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
 
         Specification<TourContract> spec = TourSpecification.fromCriteria(criteria);
         List<TourContract> tourContracts = tourProductRepository.findAll(spec);
-        List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c,criteria)).toList();
+        List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();
 //
 //        List<TourResult> tours = mockTours(); // placeholder
         return tours.stream().map(mapper::toTourResultDto).toList();
@@ -47,13 +47,21 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
         result.setAdult(2);
         result.setDuration(1);
         result.setDurationType(DurationType.D);
-        result.setType(ProductType.TOU);
+        result.setProductType(ProductType.TOU);
 
         return List.of(result);
     }
 
     @Override
     public TourResultDto detailSearch(TourSearchCriteria criteria) {
-        return null;
+        Specification<TourContract> spec = TourSpecification.fromCriteria(criteria);
+        List<TourContract> tourContracts = tourProductRepository.findAll(spec);
+        List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();
+
+        if (!tours.isEmpty()) {
+            return mapper.toTourResultDto(tours.get(0));
+        } else {
+            return null;
+        }
     }
 }

@@ -21,10 +21,10 @@ public class Cart implements Serializable {
         cartItems.add(item);
     }
 
-    public void removeItem(Integer productId) {
+    public void removeItem(String itemKey ) {
         Iterator<CartItem> it = cartItems.iterator();
         while (it.hasNext()) {
-            if (it.next().getProductId() == (productId)) {
+            if ( it.next().getItemKey().equals(itemKey)   ) {
                 it.remove();
                 return;
             }

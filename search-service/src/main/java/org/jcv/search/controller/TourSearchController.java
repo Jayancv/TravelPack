@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -46,5 +47,33 @@ public class TourSearchController {
         searchCriteria.setGroupTour(groupTour);
 
         return searchService.summarySearch(searchCriteria);
+    }
+
+    @GetMapping("/detail")
+    public TourResultDto getProduct(@RequestParam() Integer adult,
+                                           @RequestParam() Integer child,
+                                           @RequestParam() LocalDate fromDate,
+                                           @RequestParam() LocalDate toDate,
+                                           @RequestParam() Integer duration,
+                                           @RequestParam() String durationType,
+                                           @RequestParam() String tourCode,
+                                           @RequestParam(required = false) String tourName,
+                                           @RequestParam(required = false) String city,
+                                           @RequestParam(required = false) String tourType,
+                                           @RequestParam(required = false) Boolean groupTour) {
+        TourSearchCriteria searchCriteria = new TourSearchCriteria();
+        searchCriteria.setAdult(adult);
+        searchCriteria.setChild(child);
+        searchCriteria.setFromDate(fromDate);
+        searchCriteria.setToDate(toDate);
+        searchCriteria.setTourName(tourName);
+        searchCriteria.setTourCodes(Collections.singletonList(tourCode));
+        searchCriteria.setDestinationCity(city);
+        searchCriteria.setTourType(tourType);
+        searchCriteria.setDuration(duration);
+        searchCriteria.setDurationType(DurationType.valueOf(durationType));
+        searchCriteria.setGroupTour(groupTour);
+
+        return searchService.detailSearch(searchCriteria);
     }
 }

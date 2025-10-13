@@ -1,6 +1,7 @@
 package org.jcv.cart.model;
 
 import lombok.Data;
+import org.jcv.common.BookingStatus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,8 +10,10 @@ import java.util.List;
 
 @Data
 public class Cart implements Serializable {
+
     private long cartId;
-    List<CartItem> cartItems = new ArrayList<>();
+    private BookingStatus bookingStatus;
+    private List<CartItem> cartItems = new ArrayList<>();
     private Double totalPrice;
 
     public Cart() {
@@ -21,10 +24,10 @@ public class Cart implements Serializable {
         cartItems.add(item);
     }
 
-    public void removeItem(String itemKey ) {
+    public void removeItem(String itemKey) {
         Iterator<CartItem> it = cartItems.iterator();
         while (it.hasNext()) {
-            if ( it.next().getItemKey().equals(itemKey)   ) {
+            if (it.next().getItemKey().equals(itemKey)) {
                 it.remove();
                 return;
             }

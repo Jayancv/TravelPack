@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,4 +16,6 @@ public class TourContractDto extends ContractDto {
     private String tourType;
     private boolean groupTour;
     private int duration;
+
+    private List<ItineraryDto> itineraries;
 }

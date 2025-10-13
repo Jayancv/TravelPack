@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jcv.cart.model.supplier.Supplier;
+import org.jcv.common.ItemBookingStatus;
+import org.jcv.common.ItemStatus;
 import org.jcv.common.ProductType;
 import org.jcv.common.constant.ApiSplitter;
 
@@ -18,6 +20,9 @@ public abstract class CartItem implements Serializable {
     private int itemNo;
     private ProductType productType;
     private String itemKey;
+
+    private ItemStatus itemStatus;
+    private ItemBookingStatus itemBookingStatus;
 
     private int adult;
     private int child;

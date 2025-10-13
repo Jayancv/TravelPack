@@ -32,5 +32,7 @@ public abstract class Contract {
     private String cityCode;
     private String countryCode;
 
+    private String currency;
+
     public abstract ProductType getProductType();
 }

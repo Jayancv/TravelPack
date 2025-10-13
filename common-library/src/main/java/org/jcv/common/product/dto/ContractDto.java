@@ -28,4 +28,6 @@ public abstract class ContractDto {
 
     private String cityCode;
     private String countryCode;
+
+    private String currency;
 }

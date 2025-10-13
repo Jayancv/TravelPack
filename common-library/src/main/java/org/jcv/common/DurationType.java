@@ -1,5 +1,8 @@
 package org.jcv.common;
 
+import lombok.Getter;
+
+@Getter
 public enum DurationType {
     D("D", "Days"),
     H("H", "Hours"),
@@ -11,14 +14,6 @@ public enum DurationType {
     DurationType(String code, String name) {
         this.code = code;
         this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
     }
 
 

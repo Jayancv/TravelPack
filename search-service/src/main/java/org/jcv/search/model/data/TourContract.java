@@ -1,10 +1,15 @@
 package org.jcv.search.model.data;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jcv.common.ProductType;
+
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -18,6 +23,14 @@ public class TourContract extends Contract {
     private String tourType;
     private boolean groupTour;
     private int duration;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "tour_itinerary",
+            joinColumns = @JoinColumn(name = "tour_contract_id")
+    )
+    private List<Itinerary> itineraries;
+
 
     @Override
     public ProductType getProductType() {

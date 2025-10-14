@@ -4,9 +4,10 @@ import lombok.Data;
 import org.jcv.common.ProductType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-public class BaseResult {
+public class BaseResult extends CostPrice {
 
     private int adult;
     private int child;
@@ -20,5 +21,14 @@ public class BaseResult {
     private String supplierCode;
 
     private ProductType productType;
+
+    private List<Alternative> alternatives;
+
+    private Alternative selectedAlternative;
+
+    public void setSelectedAlternative(Alternative alternative) {
+        this.selectedAlternative = alternative;
+        this.add(alternative);
+    }
 
 }

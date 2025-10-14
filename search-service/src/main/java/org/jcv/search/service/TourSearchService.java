@@ -31,8 +31,9 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
         Specification<TourContract> spec = TourSpecification.fromCriteria(criteria);
         List<TourContract> tourContracts = tourProductRepository.findAll(spec);
         List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();
-//
-//        List<TourResult> tours = mockTours(); // placeholder
+
+        MarkupCalculator markupCalculator = new MarkupCalculator();
+        tours.forEach(a -> markupCalculator.calculateMarkup(a, criteria));
         return tours.stream().map(mapper::toTourResultDto).toList();
     }
 
@@ -58,6 +59,8 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
         List<TourContract> tourContracts = tourProductRepository.findAll(spec);
         List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();
 
+        MarkupCalculator markupCalculator = new MarkupCalculator();
+        tours.forEach(a -> markupCalculator.calculateMarkup(a, criteria));
         if (!tours.isEmpty()) {
             return mapper.toTourResultDto(tours.get(0));
         } else {

@@ -48,5 +48,6 @@ public class TourResultMapper implements IProductResultMapper<TourResultDto> {
     public void updateCartItemWithSearchResult(CartItem item, BaseResultDto result) {
         ((TourItem) item).setTourName(((TourResultDto) result).getTourName());
         ((TourItem) item).setTourCode(((TourResultDto) result).getTourCode());
+        item.setPrice(result.getPrice());
     }
 }

@@ -98,7 +98,6 @@ public class CartService {
         BaseResultDto result = searchService.searchProduct(item);
         mapper.updateCartItemWithSearchResult(item, result);
 
-        item.setPrice(0);
         cart.addItem(item);
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);

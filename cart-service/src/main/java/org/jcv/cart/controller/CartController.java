@@ -1,6 +1,6 @@
 package org.jcv.cart.controller;
 
-import org.jcv.cart.dto.CartDto;
+import org.jcv.common.cart.CartDto;
 import org.jcv.cart.service.CartService;
 import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +60,20 @@ public class CartController {
     @DeleteMapping("/cart/{cartId}")
     public void deleteCart(@PathVariable long cartId) {
         cartService.deleteCart(cartId);
+    }
+
+    @PostMapping("/cart/{cartId}/checkout")
+    public ResponseEntity<CartDto> cartCheckout(@PathVariable long cartId ) {
+        CartDto updatedCart = null;
+        try {
+            updatedCart = cartService.confirmCart(cartId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (updatedCart == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(updatedCart);
     }
 
 }

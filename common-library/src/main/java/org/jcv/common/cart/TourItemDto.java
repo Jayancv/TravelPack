@@ -1,4 +1,4 @@
-package org.jcv.cart.dto;
+package org.jcv.common.cart;
 
 import lombok.Data;
 import org.jcv.common.DurationType;

@@ -1,6 +1,7 @@
-package org.jcv.cart.dto;
+package org.jcv.common.cart;
 
 import lombok.Data;
+import org.jcv.common.BookingStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,4 +11,5 @@ public class CartDto {
     private String cartId;
     List<CartItemDto> cartItems = new ArrayList<>();
     private Double totalPrice;
+    private BookingStatus bookingStatus;
 }

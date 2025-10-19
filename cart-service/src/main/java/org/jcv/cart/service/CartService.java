@@ -2,16 +2,20 @@ package org.jcv.cart.service;
 
 import org.jcv.cart.client.ProductServiceClient;
 import org.jcv.cart.client.SearchServiceClient;
-import org.jcv.cart.dto.CartDto;
+import org.jcv.cart.eventpublisher.KafkaEventPublisher;
+import org.jcv.common.BookingStatus;
+import org.jcv.common.cart.CartDto;
 import org.jcv.cart.mapper.IProductResultMapper;
 import org.jcv.common.ProductType;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
+import org.jcv.common.event.cart.CartCheckOutEvent;
 import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +41,9 @@ public class CartService {
 
     @Autowired
     private org.modelmapper.ModelMapper modelMapper;
+
+    @Autowired
+    private KafkaEventPublisher eventPublisher;
 
     public CartService(RedisTemplate<String, Cart> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -128,6 +135,37 @@ public class CartService {
     public void deleteCart(long cartId) {
         redisTemplate.delete(CART_KEY_PREFIX + cartId);
     }
+
+
+    public CartDto confirmCart(long cartId) throws Exception {
+        Cart cart = null;
+        if (cartId > -1) {
+            Optional<Cart> exCart = loadCart(cartId);
+            if (exCart.isPresent()) {
+                cart = exCart.get();
+            }
+        }
+        if (cart == null) {
+            throw new Exception("Cart not found");
+            // TODO pass correct exception
+        }
+
+        CartCheckOutEvent event = CartCheckOutEvent.builder()
+                .cartId(cart.getCartId())
+                .userId(-1L)
+                .checkedOutAt(LocalDateTime.now())
+                .cart(modelMapper.map(cart, CartDto.class))
+                .build();
+
+        // Publish event
+        eventPublisher.publish("booking-checkout", event);
+
+        // Update cart status
+        cart.setBookingStatus(BookingStatus.QUOTE);
+        saveCart(cart);
+        return modelMapper.map(cart, CartDto.class);
+    }
+
 
     @SuppressWarnings("unchecked")
     private IProductResultMapper<BaseResultDto> findMapper(ProductType type) {

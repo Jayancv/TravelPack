@@ -18,12 +18,14 @@ import java.util.Date;
 @AllArgsConstructor
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,          // use logical name
-        include = JsonTypeInfo.As.PROPERTY,  // include in JSON as a field
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,  // include in JSON as a field
         property = "productType",                    // JSON field name
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TourItemDto.class, name = "TOU")
+        @JsonSubTypes.Type(value = TourItemDto.class, name = "TOU"),
+        @JsonSubTypes.Type(value = HotelItemDto.class, name = "HTL"),
+        @JsonSubTypes.Type(value = FlightItemDto.class, name = "FLT")
 })
 public class CartItemDto {
 

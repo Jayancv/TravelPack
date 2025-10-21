@@ -12,4 +12,6 @@ public class CartDto {
     List<CartItemDto> cartItems = new ArrayList<>();
     private Double totalPrice;
     private BookingStatus bookingStatus;
+
+    private List<TravellerDto> travellers; // Booking level travellers
 }

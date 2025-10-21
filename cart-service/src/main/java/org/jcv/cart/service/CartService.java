@@ -3,12 +3,15 @@ package org.jcv.cart.service;
 import org.jcv.cart.client.ProductServiceClient;
 import org.jcv.cart.client.SearchServiceClient;
 import org.jcv.cart.eventpublisher.KafkaEventPublisher;
+import org.jcv.cart.model.Traveller;
+import org.jcv.cart.util.TravellerUtils;
 import org.jcv.common.BookingStatus;
 import org.jcv.common.cart.CartDto;
 import org.jcv.cart.mapper.IProductResultMapper;
 import org.jcv.common.ProductType;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
+import org.jcv.common.cart.TravellerDto;
 import org.jcv.common.event.cart.CartCheckOutEvent;
 import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -106,9 +111,19 @@ public class CartService {
         mapper.updateCartItemWithSearchResult(item, result);
 
         cart.addItem(item);
+
+        // Create dummy travellers if not already present
+        if (cart.getTravellers().isEmpty()) {
+            List<Traveller> dummyTravellers = TravellerUtils.generateDummyTravellers(item.getAdult(),0, item.getChild(),0);
+            item.setTravellers(dummyTravellers);
+            cart.setTravellers(dummyTravellers);
+        }
+
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
+
+
 
     public CartDto removeItem(long cartId, String itemKey) {
         Cart cart = null;
@@ -165,6 +180,43 @@ public class CartService {
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
+
+
+    public CartDto updateTraveller(long cartId, List<TravellerDto> travellerDtos) {
+        Cart cart = null;
+        if (cartId > -1) {
+            Optional<Cart> exCart = loadCart(cartId);
+            if (exCart.isPresent()) {
+                cart = exCart.get();
+            }
+        }
+        if (cart == null) {
+            return null;
+            // TODO pass correct exception
+        }
+
+        for (TravellerDto dto : travellerDtos){
+            Traveller updated   = modelMapper.map(dto, Traveller.class);
+            cart.getTravellers().stream()
+                    .filter(existing -> Objects.equals(existing.getId(), updated.getId()))
+                    .findFirst()
+                    .ifPresent(existing -> {
+                        // Update fields (but keep same object reference)
+                        existing.setFirstName(updated.getFirstName());
+                        existing.setLastName(updated.getLastName());
+                        existing.setType(updated.getType());
+                        existing.setGender(updated.getGender());
+                        existing.setDateOfBirth(updated.getDateOfBirth());
+                        existing.setNationality(updated.getNationality());
+                        existing.setPassportNo(updated.getPassportNo());
+                        existing.setPassportExpiry(updated.getPassportExpiry());
+                    });
+        }
+
+        saveCart(cart);
+        return modelMapper.map(cart, CartDto.class);
+    }
+
 
 
     @SuppressWarnings("unchecked")

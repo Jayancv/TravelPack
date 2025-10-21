@@ -2,12 +2,14 @@ package org.jcv.cart.controller;
 
 import org.jcv.common.cart.CartDto;
 import org.jcv.cart.service.CartService;
+import org.jcv.common.cart.TravellerDto;
 import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -63,10 +65,25 @@ public class CartController {
     }
 
     @PostMapping("/cart/{cartId}/checkout")
-    public ResponseEntity<CartDto> cartCheckout(@PathVariable long cartId ) {
+    public ResponseEntity<CartDto> cartCheckout(@PathVariable long cartId) {
         CartDto updatedCart = null;
         try {
             updatedCart = cartService.confirmCart(cartId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (updatedCart == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(updatedCart);
+    }
+
+    @PutMapping("/cart/{cartId}/traveller")
+    public ResponseEntity<CartDto> updateTraveller(@PathVariable long cartId,
+                                                   @RequestBody List<TravellerDto> updatedTravellers) {
+        CartDto updatedCart = null;
+        try {
+            updatedCart = cartService.updateTraveller(cartId, updatedTravellers);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

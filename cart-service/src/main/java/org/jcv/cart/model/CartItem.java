@@ -10,7 +10,9 @@ import org.jcv.common.ProductType;
 import org.jcv.common.constant.ApiSplitter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -38,6 +40,8 @@ public abstract class CartItem implements Serializable {
     private int quantity;
     private double price;
 
+    private List<Long> travellerIds;
+
     public String getItemKey() {
         return productType.getCode() + ApiSplitter.ITEM_KEY_SPLITTER + itemNo;
     }
@@ -50,5 +54,14 @@ public abstract class CartItem implements Serializable {
     public static int extractItemNumber(String itemKey) {
         String[] parts = itemKey.split(ApiSplitter.ITEM_KEY_SPLITTER);
         return Integer.parseInt(parts[1]);
+    }
+
+    public void setTravellers(List<Traveller> travellers) {
+        if (travellerIds == null) {
+            travellerIds = new ArrayList<>();
+        }
+        for (Traveller t : travellers) {
+            travellerIds.add(t.getId());
+        }
     }
 }

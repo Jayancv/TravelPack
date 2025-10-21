@@ -7,11 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jcv.common.ProductType;
 import org.jcv.common.constant.ApiSplitter;
-import org.jcv.common.result.dto.HotelResultDto;
-import org.jcv.common.result.dto.TourResultDto;
+
 import org.jcv.common.supplier.dto.SupplierDto;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -46,6 +46,8 @@ public class CartItemDto {
     private int quantity;
     private double price;
     private double cost;
+
+    private List<Long> travellerIds;
 
     public String getItemKey() {
         return productType.getCode() + ApiSplitter.ITEM_KEY_SPLITTER + itemNo;

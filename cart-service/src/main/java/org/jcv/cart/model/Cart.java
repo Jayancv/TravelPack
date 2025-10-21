@@ -15,6 +15,7 @@ public class Cart implements Serializable {
     private BookingStatus bookingStatus;
     private List<CartItem> cartItems = new ArrayList<>();
     private Double totalPrice;
+    private List<Traveller> travellers = new ArrayList<>();
 
     public Cart() {
 

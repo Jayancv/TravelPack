@@ -2,8 +2,8 @@ package org.jcv.cart.controller;
 
 import org.jcv.common.cart.CartDto;
 import org.jcv.cart.service.CartService;
+import org.jcv.common.cart.CartResultDto;
 import org.jcv.common.cart.TravellerDto;
-import org.jcv.common.result.dto.BaseResultDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class CartController {
     }
 
     @PostMapping("/cart/{cartId}/item")
-    public ResponseEntity<CartDto> addItemToCart(@PathVariable long cartId, @RequestBody BaseResultDto itemDto) {
+    public ResponseEntity<CartDto> addItemToCart(@PathVariable long cartId, @RequestBody CartResultDto itemDto) {
         CartDto updatedCart = cartService.addItem(cartId, itemDto);
         if (updatedCart == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

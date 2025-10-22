@@ -13,23 +13,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TravellerUtils {
 
 
-    public static List<Traveller> generateDummyTravellers(int adults, int teen, int children, int infants) {
-        final AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+    public static List<Traveller> generateDummyTravellers(int adults, int teen, int children, int infants, int initValue) {
+        final AtomicInteger ID_GENERATOR = new AtomicInteger(initValue);
         List<Traveller> travellers = new ArrayList<>();
-        for (int i = 1; i <= adults; i++) {
-            travellers.add(createTraveller("TBD", PaxType.ADULT, 30, ID_GENERATOR));
+        if (adults > 0) {
+            for (int i = 1; i <= adults; i++) {
+                travellers.add(createTraveller("TBD", PaxType.ADULT, 30, ID_GENERATOR));
+            }
         }
 
-        for (int i = 1; i <= teen; i++) {
-            travellers.add(createTraveller("TBD", PaxType.CHILD, 12, ID_GENERATOR));
+        if (teen > 0) {
+            for (int i = 1; i <= teen; i++) {
+                travellers.add(createTraveller("TBD", PaxType.CHILD, 12, ID_GENERATOR));
+            }
         }
 
-        for (int i = 1; i <= children; i++) {
-            travellers.add(createTraveller("TBD", PaxType.CHILD, 5, ID_GENERATOR));
+        if (children > 0) {
+            for (int i = 1; i <= children; i++) {
+                travellers.add(createTraveller("TBD", PaxType.CHILD, 5, ID_GENERATOR));
+            }
         }
 
-        for (int i = 1; i <= infants; i++) {
-            travellers.add(createTraveller("TBD", PaxType.INFANT, 1, ID_GENERATOR));
+        if (infants > 0) {
+            for (int i = 1; i <= infants; i++) {
+                travellers.add(createTraveller("TBD", PaxType.INFANT, 1, ID_GENERATOR));
+            }
         }
 
         return travellers;

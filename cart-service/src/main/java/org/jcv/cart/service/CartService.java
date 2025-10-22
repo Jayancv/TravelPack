@@ -6,11 +6,13 @@ import org.jcv.cart.eventpublisher.KafkaEventPublisher;
 import org.jcv.cart.model.Traveller;
 import org.jcv.cart.util.TravellerUtils;
 import org.jcv.common.BookingStatus;
+import org.jcv.common.PaxType;
 import org.jcv.common.cart.CartDto;
 import org.jcv.cart.mapper.IProductResultMapper;
 import org.jcv.common.ProductType;
 import org.jcv.cart.model.Cart;
 import org.jcv.cart.model.CartItem;
+import org.jcv.common.cart.CartResultDto;
 import org.jcv.common.cart.TravellerDto;
 import org.jcv.common.event.cart.CartCheckOutEvent;
 import org.jcv.common.result.dto.BaseResultDto;
@@ -80,7 +82,7 @@ public class CartService {
 
     }
 
-    public CartDto addItem(long cartId, BaseResultDto itemDto) {
+    public CartDto addItem(long cartId, CartResultDto cartResultDto) {
         Cart cart = null;
         if (cartId > -1) {
             Optional<Cart> exCart = loadCart(cartId);
@@ -94,6 +96,9 @@ public class CartService {
             return null;
             // TODO pass correct exception
         }
+        BaseResultDto itemDto = cartResultDto.getResultDto();
+        List<Long> itemPaxs = cartResultDto.getTravellerIds();
+
         int maxItemNumber = cart.getCartItems().stream()
                 .filter(i -> i.getProductType().getCode().equals(itemDto.getProductType()))
                 .mapToInt(CartItem::getItemNo)
@@ -114,15 +119,43 @@ public class CartService {
 
         // Create dummy travellers if not already present
         if (cart.getTravellers().isEmpty()) {
-            List<Traveller> dummyTravellers = TravellerUtils.generateDummyTravellers(item.getAdult(),0, item.getChild(),0);
+            List<Traveller> dummyTravellers = TravellerUtils.generateDummyTravellers(item.getAdult(), 0, item.getChild(), 0, 1);
             item.setTravellers(dummyTravellers);
             cart.setTravellers(dummyTravellers);
+        } else {
+            List<Traveller> allTravellers = cart.getTravellers();
+            int[] paxCounts = new int[4]; //[ADT,TEEN,CHD,IFN]
+            for (long n : itemPaxs) {
+                if (n > 0) {
+                    Optional<Traveller> tOpt = allTravellers.stream().filter(a -> a.getPaxNo() == n).findFirst();
+                    if (tOpt.isPresent()) {
+                        switch (tOpt.get().getType()) {
+                            case ADULT -> paxCounts[0] = paxCounts[0] + 1;
+                            case TEEN -> paxCounts[1] = paxCounts[1] + 1;
+                            case CHILD -> paxCounts[2] = paxCounts[2] + 1;
+                            case INFANT -> paxCounts[3] = paxCounts[3] + 1;
+                        }
+                        item.getTravellerIds().add((long) tOpt.get().getPaxNo());
+                    }
+                }
+            }
+            int maxNum = allTravellers.size();
+            List<Traveller> newTravellers = TravellerUtils.generateDummyTravellers(
+                    itemDto.getAdult() - paxCounts[0], 0,
+                    itemDto.getChild() - paxCounts[2], 0, maxNum + 1);
+            if (!newTravellers.isEmpty()) {
+                for (Traveller t : newTravellers) {
+                    item.getTravellerIds().add((long) t.getPaxNo());
+                    cart.getTravellers().add(t);
+                }
+
+            }
+
         }
 
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
-
 
 
     public CartDto removeItem(long cartId, String itemKey) {
@@ -195,8 +228,8 @@ public class CartService {
             // TODO pass correct exception
         }
 
-        for (TravellerDto dto : travellerDtos){
-            Traveller updated   = modelMapper.map(dto, Traveller.class);
+        for (TravellerDto dto : travellerDtos) {
+            Traveller updated = modelMapper.map(dto, Traveller.class);
             cart.getTravellers().stream()
                     .filter(existing -> Objects.equals(existing.getId(), updated.getId()))
                     .findFirst()
@@ -216,7 +249,6 @@ public class CartService {
         saveCart(cart);
         return modelMapper.map(cart, CartDto.class);
     }
-
 
 
     @SuppressWarnings("unchecked")

@@ -64,4 +64,10 @@ public abstract class CartItem implements Serializable {
             travellerIds.add(t.getId());
         }
     }
+    public List<Long>  getTravellerIds() {
+        if (travellerIds == null) {
+            travellerIds = new ArrayList<>();
+        }
+        return  travellerIds;
+    }
 }

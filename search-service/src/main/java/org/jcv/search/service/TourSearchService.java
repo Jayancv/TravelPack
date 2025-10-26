@@ -9,6 +9,8 @@ import org.jcv.search.model.data.TourContract;
 import org.jcv.search.model.result.TourResult;
 import org.jcv.search.repository.TourProductRepository;
 import org.jcv.search.specification.TourSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.List;
 @Service
 public class TourSearchService implements ISearchService<TourSearchCriteria, TourResultDto> {
 
+    private static final Logger logger = LoggerFactory.getLogger("TourSearch");
+
     @Autowired
     private TourProductRepository tourProductRepository;
 
@@ -28,6 +32,7 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
     @Override
     public List<TourResultDto> summarySearch(TourSearchCriteria criteria) {
 
+        logger.info("Summary Search criteria {}", criteria.toString());
         Specification<TourContract> spec = TourSpecification.fromCriteria(criteria);
         List<TourContract> tourContracts = tourProductRepository.findAll(spec);
         List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();
@@ -55,6 +60,8 @@ public class TourSearchService implements ISearchService<TourSearchCriteria, Tou
 
     @Override
     public TourResultDto detailSearch(TourSearchCriteria criteria) {
+
+        logger.info("Detail Search criteria {}", criteria.toString());
         Specification<TourContract> spec = TourSpecification.fromCriteria(criteria);
         List<TourContract> tourContracts = tourProductRepository.findAll(spec);
         List<TourResult> tours = tourContracts.stream().map(c -> mapper.toTourResult(c, criteria)).toList();

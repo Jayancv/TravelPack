@@ -22,6 +22,10 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Traveller> travellers = new ArrayList<>();
+
+
     public void addItem(BookingItem item) {
         item.setBooking(this);
         if (bookingItems == null) {

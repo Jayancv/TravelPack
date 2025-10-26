@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.jcv.common.ItemBookingStatus;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,4 +26,5 @@ public abstract class BookingItemDto {
     private double price;
     private double cost;
 
+    private List<Long> travellerIds;
 }

@@ -6,6 +6,7 @@ import lombok.*;
 import org.jcv.common.ItemBookingStatus;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -36,4 +37,7 @@ public abstract class BookingItem {
     private String currency;
     private double price;
     private double cost;
+
+    private List<Long> travellerIds;
+
 }

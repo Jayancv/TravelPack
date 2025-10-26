@@ -3,8 +3,12 @@ package org.jcv.search.service;
 import org.jcv.search.model.criteria.BaseSearchCriteria;
 import org.jcv.search.model.result.Alternative;
 import org.jcv.search.model.result.BaseResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MarkupCalculator {
+    private static final Logger logger = LoggerFactory.getLogger("MarkupCalculator");
+
     private double markupRate = 110;
 
     public void calculateMarkup(BaseResult result, BaseSearchCriteria criteria) {
@@ -35,6 +39,8 @@ public class MarkupCalculator {
             alt.setTeenPrice((alt.getTeenCost() * markupRate) / 100);
             alt.setChildPrice((alt.getChildCost() * markupRate) / 100);
             alt.setInfantPrice((alt.getInfantCost() * markupRate) / 100);
+
+            logger.info("Markup calculated, rate:{}, totalCost:{}, totalPrice:{}", markupRate, totalCost, totalPrice);
         }
 
         result.setSelectedAlternative(result.getAlternatives().get(0));

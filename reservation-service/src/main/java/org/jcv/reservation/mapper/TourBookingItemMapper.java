@@ -26,6 +26,7 @@ public class TourBookingItemMapper implements IBookingItemMapper<TourBookingItem
         tourBookingDto.setPrice(item.getPrice());
         tourBookingDto.setCost(item.getCost());
         tourBookingDto.setCurrency(item.getCurrency());
+        tourBookingDto.setTravellerIds(item.getTravellerIds());
 
         // TODO map other fields
 
@@ -38,6 +39,7 @@ public class TourBookingItemMapper implements IBookingItemMapper<TourBookingItem
         bookingItem.setId(new BookingItemId(-1L, cartItem.getProductType().getCode(), cartItem.getItemNo()));
         bookingItem.setPrice(cartItem.getPrice());
         bookingItem.setCost(cartItem.getCost());
+        bookingItem.setTravellerIds(cartItem.getTravellerIds());
 
         // TODO map other fields
 
